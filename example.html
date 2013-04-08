@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Monolog Player</title>
+
+<meta charset="utf-8">
+
+
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+
+<!-- INCLUDE SPEAKKER -->
+<script type="text/javascript" src="speakker-big-1.2.22r209.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		projekktor('.projekktor');
+	});
+	</script>
+	<!-- that´s it -->
+<!-- That´s it -->
+
+</head>
+
+<body>
+	<h1>Mono-log Player</h1>
+	<a href="mp3Scrapper.php">Scrapp site</a>
+	<!-- this is where Speakker will sit on. Note that all classes are obligatory. -->
+	<!-- "dark" can be replaced by "light" to change the color scheme -->
+	<audio class="projekktor speakker light">
+		<source src="monologMp3.json" type="application/json"/>
+	</audio>
+	<!-- that´s it -->
+</body>
+</html>

@@ -50,7 +50,7 @@ do{
 }
 while( $nextPage );
 
-echo json_encode( $mp3Library );
+echo json_encode( array( 'playlist' => $mp3Library ) );
 
 
 function getAllMp3FromSinglePage( $simpleDomPage )
@@ -64,7 +64,7 @@ function getAllMp3FromSinglePage( $simpleDomPage )
 
             // Save the url
             $songLink = $songPost->find('.entry-title a');
-            $url = $songLink[0]->href;
+            $url = str_replace(' ', '%20', $songLink[0]->href);
 
             // Save the number
             $number = $songLink[0]->plaintext;
@@ -73,7 +73,19 @@ function getAllMp3FromSinglePage( $simpleDomPage )
             $songDate = $songPost->find('.entry-date');
             $date = $songDate[0]->plaintext;
 
-            $pageResults[] = array( 'url' => $url, 'number' => $number, 'date' => $date  );
+            // Get the post title referenced to this mp3
+            $songTitle = $songPost->find('.sm-ll a');
+            $postLink = $songTitle[0]->href;
+            $postName = $songTitle[0]->plaintext;
+
+            $pageResults[] = array( '0' => array('src' => $url, 'type' => 'audio/mp3' ),
+                                    '1' => array('src' => $url, 'type' => 'audio/ogg' ),
+                                    'config' => array(  'title'     => $number . ' - ' . $postName,
+                                                        'post'      => 'http://mono-log.org' . $postLink,
+                                                        'poster'    => 'http://mono-log.org/dev/assets/img/todays-desk.png',
+                                                        'number'    => $number, 
+                                                        'date'      => $date  ),
+                                    );
 
         }
 
