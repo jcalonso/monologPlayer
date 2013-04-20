@@ -1,6 +1,5 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
  * User: jcalonso
  * Date: 08/04/2013
  * Time: 13:45
@@ -13,11 +12,14 @@ require_once 'simple_html_dom.php';
 
 // Search for the mp3Library database
 define( 'JSON_MP3_LIB_PATH', 'monologMp3.json' );
+define( 'PLAYLIST_COVER_IMAGE', 'http://mono-log.org/dev/assets/img/todays-desk.png' );
+define( 'BLOG_URL', 'http://www.mono-log.org/blog' );
 
 // If the file exist load it as an array
 if( file_exists( JSON_MP3_LIB_PATH ) ) {
     // Load it
     $mp3Library = json_decode( file_get_contents( JSON_MP3_LIB_PATH ), true );
+    $mp3Library = $mp3Library['playlist'];
     $mp3LibraryKeys = getMp3LibraryKeys( $mp3Library );
 }
 else{ // Or just create an array
@@ -26,7 +28,7 @@ else{ // Or just create an array
 }
 
 // Set the initial page
-$pageUrl  = 'http://www.mono-log.org/blog';
+$pageUrl  = BLOG_URL;
 
 do{
     // Get the html page
@@ -35,7 +37,7 @@ do{
     // Load a page form the blog
     $actualPageArray = getAllMp3FromSinglePage( $html, $mp3LibraryKeys );
 
-    // Check if we dont have a false
+    // Check if we don't have a false
     if( $actualPageArray === false ){
         // finish the process
         break;
@@ -65,7 +67,7 @@ do{
     // Mark the flag to search again
     if( $nextPage ) {
 
-        $pageUrl = 'http://www.mono-log.org/blog' . $nextPage;
+        $pageUrl = BLOG_URL . $nextPage;
     }
 
     $counter++;
@@ -73,15 +75,21 @@ do{
 }
 while( $nextPage );
 
-// TODO: Order the array based on the key
+// Order the array based on the key
+$mp3Library = arrayElementSort( $mp3Library, 'config','number', true );
 
 // Write the file
-file_put_contents( JSON_MP3_LIB_PATH, json_encode( $mp3Library ) );
+file_put_contents( JSON_MP3_LIB_PATH, json_encode( array( 'playlist' => $mp3Library ) ) );
 
-echo json_encode( array( 'playlist' => $mp3Library ) );
-
-
-function getAllMp3FromSinglePage( $simpleDomPage, $libraryKeys, $forceReindexing = false )
+/**
+ * Parses a single page of the blog and checks if the song is already in the library,
+ * if a song is found then the whole process stop unless we force re indexing.
+ * @param object $simpleDomPage The page to scrap using simpleHtmlDomClass.
+ * @param array $libraryKeys The library keys we use the song number as the key.
+ * @param bool $forceIndexing In case we need to force re-indexing and scrapping all pages to search for new songs.
+ * @return array|bool
+ */
+function getAllMp3FromSinglePage( $simpleDomPage, $libraryKeys, $forceIndexing = false )
 {
     $html = $simpleDomPage;
 
@@ -100,8 +108,8 @@ function getAllMp3FromSinglePage( $simpleDomPage, $libraryKeys, $forceReindexing
         // Check that we don't have in our mp4 library database
         if( in_array( $number, $libraryKeys) ) {
 
-            // If $forceReindexing is true, then it will check every single key
-            if(  $forceReindexing )
+            // If $forceIndexing is true, then it will check every single key
+            if(  $forceIndexing )
             {
                 continue;
             }
@@ -125,11 +133,12 @@ function getAllMp3FromSinglePage( $simpleDomPage, $libraryKeys, $forceReindexing
         $postLink = $songTitle[0]->href;
         $postName = $songTitle[0]->plaintext;
 
+        // Build the array following the speakker API:http://www.projekktor.com/docs/playlists
         $pageResults[] = array( '0' => array('src' => $url, 'type' => 'audio/mp3' ),
                                 '1' => array('src' => $url, 'type' => 'audio/ogg' ),
                                 'config' => array(  'title'     => $number . ' - ' . $postName,
                                                     'post'      => 'http://mono-log.org' . $postLink,
-                                                    'poster'    => 'http://mono-log.org/dev/assets/img/todays-desk.png',
+                                                    'poster'    => PLAYLIST_COVER_IMAGE,
                                                     'number'    => $number,
                                                     'date'      => $date  ),
                                 );
@@ -139,6 +148,11 @@ function getAllMp3FromSinglePage( $simpleDomPage, $libraryKeys, $forceReindexing
     return array( 'pageResults' => $pageResults, 'libraryKeys' => $libraryKeys );
 }
 
+/**
+ * Get all the keys of the mp3Library
+ * @param $mp3Library
+ * @return array
+ */
 function getMp3LibraryKeys( $mp3Library )
 {
     $keys = array();
@@ -149,6 +163,30 @@ function getMp3LibraryKeys( $mp3Library )
     }
 
     return $keys;
+}
+
+/**
+ * Sort a multidimensional array by a given element and sub-element
+ *
+ * @static
+ * @param array $array
+ * @param string $elementName Name of the element to sort by
+ * @param string $subElementName Name of the sub element to sort by
+ * @param bool $desc Descending order?
+ * @return mixed
+ */
+function arrayElementSort( $array, $elementName, $subElementName, $desc = false )
+{
+    if ( $desc ) {
+        usort( $array, function ( $a, $b ) use ( $elementName ,$subElementName ) {
+            return strnatcmp( $b[$elementName][$subElementName], $a[$elementName][$subElementName] );
+        });
+    } else {
+        usort( $array, function ( $a, $b ) use ( $elementName, $subElementName ) {
+            return strnatcmp( $a[$elementName][$subElementName], $b[$elementName][$subElementName] );
+        });
+    }
+    return $array;
 }
 
 ?>
