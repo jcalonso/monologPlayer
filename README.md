@@ -27,11 +27,11 @@ Initialize speakker
 </script>
 ```
 
-Place the player somewhere betweet your <body> </body> tags
+Place the player somewhere betweet your 'body' tags
 ```
 <audio class="projekktor speakker light">
-  	<source src="monologPlaylistServer.php" type="application/json"/>
-	</audio>
+  <source src="monologPlaylistServer.php" type="application/json"/>
+</audio>
 ```
 
 Upload the mp3Scrapper.php to your server (cappable of executing php scripts)
