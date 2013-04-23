@@ -1,12 +1,12 @@
-monologPlayer
+Mono-log Player
 =============
 
-A simple scrapper to create a playlist of Mono-log.org website and play it with Speakker html5 player.
+A simple scrapper to create a playlist of [Mono-log.org](http://mono-log.org) website and play it with Speakker html5 player.
 
 ## How to use
 
 The first part requires to add the html5 audio player in your website, in this case we are using Speakker for the nice
-support of playlists. Speakker can be downloaded from http://www.speakker.com (the script is already in the example folder).
+support of playlists. Speakker can be downloaded from [speakker.com](http://speakker.com) (the script is already in the example folder).
 
 Load jQuery
 ```
