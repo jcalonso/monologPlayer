@@ -1,14 +1,13 @@
 <?php
 /**
- * User: jcalonso
- * Date: 08/04/2013
- * Time: 13:45
- * @author Juan Carlos Alonso <me@jcalonso.com>
+ * @author Juan Carlos Alonso <me@jcalonso.com> @jcalonso86
  * Scrapper for the site mono-log.org
+ * Date: 08/04/2013
  */
 
 // SimpleDom lib
-require_once 'simple_html_dom.php';
+require_once 'lib/simple_html_dom.php';
+
 
 // Search for the mp3Library database
 define( 'JSON_MP3_LIB_PATH', 'monologMp3.json' );
@@ -80,6 +79,8 @@ $mp3Library = arrayElementSort( $mp3Library, 'config','number', true );
 
 // Write the file
 file_put_contents( JSON_MP3_LIB_PATH, json_encode( array( 'playlist' => $mp3Library ) ) );
+
+echo file_get_contents( JSON_MP3_LIB_PATH );
 
 /**
  * Parses a single page of the blog and checks if the song is already in the library,
@@ -189,4 +190,4 @@ function arrayElementSort( $array, $elementName, $subElementName, $desc = false 
     return $array;
 }
 
-?>
+//EOF monologPlaylistServer.php
