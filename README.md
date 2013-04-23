@@ -27,12 +27,13 @@ Initialize speakker
 </script>
 ```
 
-Place the player somewhere betweet your 'body' tags
+Place the player somewhere betweet your 'body' tags.
+Make sure that the source of the 'monologPlaylistServer.php' is matches the one in your server (next step).
 ```
 <audio class="projekktor speakker light">
   <source src="monologPlaylistServer.php" type="application/json"/>
 </audio>
 ```
 
-Upload the mp3Scrapper.php to your server (cappable of executing php scripts)
+Upload the monologPlaylistServer.php to your server (capable of executing php scripts)
 The first time the player can take 30 seconds to load because it will create a 'database' (json playlist)
