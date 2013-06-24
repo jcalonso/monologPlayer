@@ -36,16 +36,16 @@ do{
     // Load a page form the blog
     $actualPageArray = getAllMp3FromSinglePage( $html, $mp3LibraryKeys );
 
-    // Check if we don't have a false
-    if( $actualPageArray === false ){
-        // finish the process
-        break;
-    }
-
     $mp3LibraryKeys = $actualPageArray['libraryKeys'];
 
     // Add the new results to the main array
     $mp3Library = array_merge( $actualPageArray['pageResults'] , $mp3Library );
+
+    // Check if we should continue crawling
+    if( $actualPageArray['stopCrawling'] === true ){
+        // finish the process
+        break;
+    }
 
     // Search for next page
     $pagination = $html->find('.pagination');
@@ -117,7 +117,7 @@ function getAllMp3FromSinglePage( $simpleDomPage, $libraryKeys, $forceIndexing =
             else{
                 // If not, only the first is checked and stops the process since the songs are read form newer
                 // to older, if we found a key, means we already have all the older.
-                return false;
+                return array( 'pageResults' => $pageResults, 'libraryKeys' => $libraryKeys, 'stopCrawling' => true );
             }
 
         }
